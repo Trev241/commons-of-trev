@@ -1,3 +1,7 @@
+// Before you even bother reading ahead, mind you, there aren't that many comments to help explain what in hell's name is going
+// on. Please continue at your own risk of decaying your brain cells and wasting your time :3
+// And it's likely that I've not strictly followed any code ethics, so please pardon me for my indecency
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
@@ -30,6 +34,7 @@ public class SpacebarDestruction implements Runnable{
 		window = new Window("Spacebar Destruction", 1200, 600, this);
 		window.getContentPane().setBackground(stdColor);
 		
+		// In case you haven't noticed, this label is the one that is right at the centre
 		label = new JLabel("Is your hate for the spacebar sufficient to break it?", SwingConstants.CENTER);
 		label.setFont(stdFont);
 		label.setForeground(new Color(215, 215, 215));
@@ -47,6 +52,8 @@ public class SpacebarDestruction implements Runnable{
 		stopwatch.setBounds(10, 120, 1180, 50);
 		stopwatch.setVisible(false);
 		
+		// It's just easier to do it this way, there are three buttons and they are going to be placed in the window
+		// in a very much orderly fashion. Without a loop, I will be writing the more or less similar statements thrice
 		responses = new JButton[3];
 		for (int i = 0, x = 150; i < responses.length; i++, x += 300) {
 			responses[i] = new JButton("---");
@@ -70,6 +77,7 @@ public class SpacebarDestruction implements Runnable{
 	
 	@Override
 	public void run() {
+		// Just ignore this
 		System.out.println("Entering role-play mode now...");
 		
 		// PATH - 1
@@ -99,10 +107,20 @@ public class SpacebarDestruction implements Runnable{
 						if (sec == 0) {
 							timeIsUp = true;
 							subLabel.setText("Presses per second : " + (float) (clicks / 30));
+							
+							// What I notcied later is that this label constantly flickers during
+							// runtime. It's because I'm using the "changeText()" function and the 
+							// timer constantly loops this since it (the Timer) hasn't been killed 
+							// yet
+							// Nevertheless, it's cool to look at
 							changeText("<program is now safe to terminate>");
 							return;
 						}
 						--sec;
+						
+						// This ternary operator mess you see here just makes sure that if the if the 
+						// time in the seconds place is a single digit, it preceeds it with a zero
+						// For example: "00 : 9" would appear as "00 : 09"
 						stopwatch.setText("00 : 00 : " + ((sec > 9) ? sec : "0" + sec));
 					}
 				});
@@ -110,6 +128,7 @@ public class SpacebarDestruction implements Runnable{
 				countDown.setInitialDelay(8000);
 				countDown.start();
 				
+				// If you don't request for focus the damned KeyListener will not work :/
 				window.requestFocus();
 				
 				window.addKeyListener(new KeyListener() {
@@ -131,6 +150,9 @@ public class SpacebarDestruction implements Runnable{
 						
 					}
 					
+					// A friend of mine realised that you could hold down the spacebar for getting a really 
+					// high "Presses per second". It's because of this function.
+					// I'm too lazy to bother changing it
 					@Override
 					public void keyPressed(KeyEvent arg0) {
 						System.out.println("Pressed event fired");
@@ -144,6 +166,11 @@ public class SpacebarDestruction implements Runnable{
 				});
 			}
 		});
+		
+		// Basically from here, if the user presses any of the buttons except "Yes" then the program will 
+		// just gives them a snazzy message before self-terminating 
+		
+		// You might even see nested timers. I do not know if this is a good ethical thing to do or not
 		
 		// PATH - 2
 		
@@ -188,9 +215,12 @@ public class SpacebarDestruction implements Runnable{
 	public void stop() {
 		try {
 			thread.join();
-		} catch(InterruptedException e) {}
+		} catch(InterruptedException e) {}	// My thread is possibly never going to get interrupted so I'll leave this
 	}
 	
+	// The name of the function makes it sound as though this is just a clone of the "setText()" function that is 
+	// already available, but in reality, it fades the foreground color of the text to the background and THEN changes it
+	// See? There's a difference
 	public void changeText(String message) {
 		new Thread(new Runnable() {
 			@Override
@@ -211,12 +241,14 @@ public class SpacebarDestruction implements Runnable{
 		}).start();
 	}
 	
+	// Smallest main method I have ever seen
 	public static void main(String[] args) {
 		SpacebarDestruction game = new SpacebarDestruction();
 		game.start();
 	}
 }
 
+// Might as well have the Window class in the same .java file
 class Window extends JFrame {
 	private static final long serialVersionUID = 1L;
 	
@@ -226,9 +258,12 @@ class Window extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(width, height);
 		setLocationRelativeTo(null);
+		
+		// The setBounds() normally works only when the Layout is declared to be null
 		setLayout(null);
 	}
 	
+	// I don't know why I made this function. Possibly because minimizing and restoring the window updates its contents...
 	public void updateWindow() {
 		setVisible(false);
 		setVisible(true);
