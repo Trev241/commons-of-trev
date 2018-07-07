@@ -1,0 +1,118 @@
+import java.util.*;
+
+class Island {
+  static Scanner sc=new Scanner(System.in);
+  char[][] map;
+  
+  int seaLevelMin, seaLevelMax, rows, columns;
+  
+  public void initMap() {
+    rows = sc.nextInt();
+    columns = sc.nextInt();
+    
+    sc.nextLine();	// Flush to next line below
+    
+    map = new char[rows][columns];
+    
+    for (int i = 0; i < rows; i++) {
+      String row = sc.nextLine().trim();//dis good way
+      for(int strI = 0; strI < row.length(); strI++) 
+        map[i][strI] = row.charAt(strI);
+    }
+    
+    seaLevelMin = sc.nextInt();
+    seaLevelMax = sc.nextInt();
+    
+    sc.nextLine();	// Flush to next line below
+  }
+  
+  public void displayMap() {
+    for (int i = 0; i < map.length; i++) {
+      for (int j = 0; j < map[i].length; j++)
+        	System.out.print(map[i][j]);
+      System.out.println();
+    }
+  }
+  
+  public ArrayList<Character> getAdjacentCellsOf(int x, int y) {
+    ArrayList<Character> adjacentCells = new ArrayList<Character>();
+    
+    // GENERIC ADJACENT CELL SEARCH ALGORITHM
+//     // CELLS IN THE ROW ABOVE
+//     adjacentCells.add(map[x - 1][y - 1]);
+//     adjacentCells.add(map[x - 1][y]);
+//     adjacentCells.add(map[x - 1][y + 1]);
+    
+//     // CELLS TO THE LEFT AND RIGHT
+//     adjacentCells.add(map[x][y - 1]);
+//   	adjacentCells.add(map[x][y + 1]);
+    
+//     // CELLS IN THE ROW BELOW
+//     adjacentCells.add(map[x + 1][y - 1]);
+//     adjacentCells.add(map[x + 1][y]);
+//     adjacentCells.add(map[x + 1][y + 1]);
+    
+    // CELLS IN THE ROW ABOVE
+    if (x > 0) {  
+      if (y > 0)
+      	adjacentCells.add(map[x - 1][y - 1]);
+      adjacentCells.add(map[x - 1][y]);
+      if (y < columns - 1)
+      	adjacentCells.add(map[x - 1][y + 1]);
+    }
+    
+    // CELLS TO THE LEFT AND RIGHT
+    if (y > 0)
+    	adjacentCells.add(map[x][y - 1]);
+  	if (y < columns - 1)
+    	adjacentCells.add(map[x][y + 1]);
+    
+    // CELLS IN THE ROW BELOW
+    if (x < rows - 1) {
+      if (y > 0)
+      	adjacentCells.add(map[x + 1][y - 1]);
+      adjacentCells.add(map[x + 1][y]);
+      if (y < columns - 1)
+      	adjacentCells.add(map[x + 1][y + 1]);
+    }
+    
+    return adjacentCells;
+  }
+  
+  public void checkLevel(int seaLevel) {
+    	boolean hasWater = false;
+  	for (seaLevel = seaLevelMin; seaLevel <= seaLevelMax; seaLevel++) {
+          	System.out.println("Sea Level: " + seaLevel);
+        	for (int i = 0; i < map.length; i++) {
+                	for (int j = 0; j < map[i].length; j++) {
+                        	if (Character.isDigit(map[i][j])) {
+                                        if (seaLevel >= Integer.parseInt(Character.toString(map[i][j]))) {
+                                                ArrayList<Character> cells = getAdjacentCellsOf(i, j);
+                                          	hasWater = false;
+                                                for (char cell : cells) {
+                                                        if (cell == '.') {
+                                                                System.out.print("W");
+                                                          	hasWater = true;
+                                                          	map[i][j] = '.';
+                                                          	break;
+                                                        }
+                                                }
+                                          	if (!hasWater)
+                                          		System.out.print(" ");
+                                        } else
+                                          	System.out.print(" ");
+                                } else
+                          		System.out.print("W");
+                        }
+                  	System.out.println();
+                }
+        } 
+  } 
+    
+  public static void main(String[] args) {
+    Island island = new Island();
+    island.initMap();
+    
+    island.checkLevel(0);
+  }
+}
